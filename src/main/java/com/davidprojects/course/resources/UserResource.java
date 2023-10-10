@@ -11,6 +11,7 @@ import com.davidprojects.course.entities.User;
 @RequestMapping(value = "/users")
 public class UserResource {
 
+	//Criar um metodo get no endpoint /users
 	@GetMapping
 	public ResponseEntity<User> findAll(){
 		User u = new User(1L, "Maria", "maria@gmail.com", "999999", "12345");
