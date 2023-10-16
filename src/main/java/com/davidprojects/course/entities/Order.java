@@ -2,6 +2,8 @@ package com.davidprojects.course.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.davidprojects.course.entities.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -12,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -30,9 +33,15 @@ public class Order implements Serializable {
 	
 	private Integer orderStatus;
 
+	//Um order tem um user, mas um user tem vários clientes
 	@ManyToOne //muitos para um
 	@JoinColumn(name = "client_id")
 	private User client;
+	
+	//Um Order tem uma colecao de OrderItems
+	//O order conhece os items dele
+	@OneToMany(mappedBy = "id.order")
+	private Set<OrderItem> items = new HashSet<>();
 	
 	public Order() {}
 
@@ -75,6 +84,11 @@ public class Order implements Serializable {
 
 	public void setClient(User client) {
 		this.client = client;
+	}
+	
+	//O order conhece os items dele
+	public Set<OrderItem> getItems(){
+		return items;
 	}
 
 	@Override

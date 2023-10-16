@@ -27,6 +27,7 @@ public class User implements Serializable {
 	private String phone;	
 	private String password;
 	
+	//Um user tem uma colecao de Orders
 	@JsonIgnore //evitar o loop
 	@OneToMany(mappedBy = "client") // 1 para muitos, e digo que na classe Order este atributo está mapeado para client
 	private List <Order> orders = new ArrayList<>();

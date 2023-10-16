@@ -10,10 +10,12 @@ import org.springframework.context.annotation.Profile;
 
 import com.davidprojects.course.entities.Category;
 import com.davidprojects.course.entities.Order;
+import com.davidprojects.course.entities.OrderItem;
 import com.davidprojects.course.entities.Product;
 import com.davidprojects.course.entities.User;
 import com.davidprojects.course.entities.enums.OrderStatus;
 import com.davidprojects.course.repositories.CategoryRepository;
+import com.davidprojects.course.repositories.OrderItemRepository;
 import com.davidprojects.course.repositories.OrderRepository;
 import com.davidprojects.course.repositories.ProductRepository;
 import com.davidprojects.course.repositories.UserRepository;
@@ -33,6 +35,9 @@ public class TestConfig implements CommandLineRunner{
 	
 	@Autowired 
 	private ProductRepository productRepository;
+	
+	@Autowired 
+	private OrderItemRepository orderItemRepository;
 	
 	
 
@@ -80,9 +85,12 @@ public class TestConfig implements CommandLineRunner{
 		
 		orderRepository.saveAll(Arrays.asList(o1,o2,o3));
 		
-		
+		OrderItem oi1 = new OrderItem(o1, p1, 2, p1.getPrice()); 
+		OrderItem oi2 = new OrderItem(o1, p3, 1, p3.getPrice()); 
+		OrderItem oi3 = new OrderItem(o2, p3, 2, p3.getPrice()); 
+		OrderItem oi4 = new OrderItem(o3, p5, 2, p5.getPrice()); 
 	
-		
+		orderItemRepository.saveAll(Arrays.asList(oi1,oi2,oi3,oi4));
 		
 	}
 }
