@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 
@@ -28,16 +31,19 @@ public class Product implements Serializable {
 	private Double price;
 	private String imgUrl;
 
-	// Set representa um conjunto, isso é para garantir que um produto nao tenha
-	// mais de uma ocrrencia na mesma categoria
-	// Temos que instanciar para garantir que nossa coleçao nao comece nul, mas sim
-	// vazia
-	
+	// Set representa um conjunto, isso é para garantir que um produto nao tenha mais de uma ocrrencia na mesma categoria
+	//Um produto pode pertencer a várias categorias, muitos para muitos
 	@ManyToMany
 	@JoinTable(name = "tb_product_category", 
 	joinColumns = @JoinColumn(name = "product_id"),
 	inverseJoinColumns = @JoinColumn(name = "category_id"))
+	// Temos que instanciar para garantir que nossa coleçao nao comece null, mas sim vazia
 	private Set<Category> categories = new HashSet<>();
+	
+	//Set para nao admitir repeticao
+	@OneToMany(mappedBy = "id.product")
+	private Set<OrderItem> items = new HashSet<>();
+	
 
 	public Product() {
 	}
@@ -94,6 +100,17 @@ public class Product implements Serializable {
 
 	public Set<Category> getCategories() {
 		return categories;
+	}
+	
+	@JsonIgnore
+	public Set<Order> getOrders(){
+		Set<Order> set = new HashSet<>();
+		
+		//Pecorre a colecao de orderItems do product e retornar os orders associados
+		for (OrderItem orderItem : items) {
+			set.add(orderItem.getOrder());
+		}
+		return set;
 	}
 
 	@Override

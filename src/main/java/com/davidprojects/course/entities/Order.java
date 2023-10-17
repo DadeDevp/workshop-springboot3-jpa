@@ -40,6 +40,7 @@ public class Order implements Serializable {
 	
 	//Um Order tem uma colecao de OrderItems
 	//O order conhece os items dele
+	//mapeada para o atributo OrdemItemPK da classe OrdemItem, que tem como nome id, logo id.order
 	@OneToMany(mappedBy = "id.order")
 	private Set<OrderItem> items = new HashSet<>();
 	

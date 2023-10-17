@@ -16,7 +16,6 @@ public class OrderItem implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@EmbeddedId
-	
 	private OrderItemPK id = new OrderItemPK();//Tem que instanciar classe composta
 	private Integer quantity;
 	private Double price;
@@ -33,6 +32,7 @@ public class OrderItem implements Serializable{
 	}
 	
 	//Get e setters para order e set usando o OrderItemPK
+	
 	@JsonIgnore // para evitar de chamar o pedido associado, evitar loop infinito
 	public Order getOrder() {
 		return id.getOrder();
@@ -41,6 +41,7 @@ public class OrderItem implements Serializable{
 	public void setOrder(Order order) {
 		id.setOrder(order);
 	}
+	
 	
 	public Product getProduct() {
 		return id.getProduct();
