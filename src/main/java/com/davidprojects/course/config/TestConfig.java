@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Profile;
 import com.davidprojects.course.entities.Category;
 import com.davidprojects.course.entities.Order;
 import com.davidprojects.course.entities.OrderItem;
+import com.davidprojects.course.entities.Payment;
 import com.davidprojects.course.entities.Product;
 import com.davidprojects.course.entities.User;
 import com.davidprojects.course.entities.enums.OrderStatus;
@@ -91,6 +92,14 @@ public class TestConfig implements CommandLineRunner{
 		OrderItem oi4 = new OrderItem(o3, p5, 2, p5.getPrice()); 
 	
 		orderItemRepository.saveAll(Arrays.asList(oi1,oi2,oi3,oi4));
+		
+		//CRIAR UM PAYMENT
+		Payment pay1 = new Payment(null, Instant.parse("2019-06-20T21:53:07Z"), o1);
+		//Associar o payment no order
+		o1.setPayment(pay1);
+		//Salvar as alteraçoes no pedido no banco
+		orderRepository.save(o1);
+		
 		
 	}
 }
