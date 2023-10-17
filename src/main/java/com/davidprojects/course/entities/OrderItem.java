@@ -95,6 +95,9 @@ public class OrderItem implements Serializable{
 		return true;
 	}
 	
-	
+	//Temos sempre que por o get, nao podia ser subtotal
+	public Double getSubTotal() {
+		return price * quantity; 
+	}
 	
 }

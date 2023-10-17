@@ -3,6 +3,8 @@ package com.davidprojects.course.entities;
 import java.io.Serializable;
 import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,6 +25,7 @@ public class Payment implements Serializable {
 	private Instant moment;
 	
 	//Um payment tem um order
+	@JsonIgnore
 	@OneToOne
 	@MapsId //Payment é uma classe dependente, pq pode haver um order sem payment, mas nao um payment sem order
 	private Order order;

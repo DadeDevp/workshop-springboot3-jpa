@@ -20,39 +20,43 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "tb_order") //se deixar o nome da table igual ao nome da classe (Order) dá conflito com comando do sql
+@Table(name = "tb_order") // se deixar o nome da table igual ao nome da classe (Order) dá conflito com
+							// comando do sql
 public class Order implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	//Configurar o formato da data no banco
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT" )
+
+	// Configurar o formato da data no banco
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
 	private Instant moment;
-	
+
 	private Integer orderStatus;
 
-	//Um order tem um user, mas um user tem vários clientes
-	@ManyToOne //muitos para um
+	// Um order tem um user, mas um user tem vários clientes
+	@ManyToOne // muitos para um
 	@JoinColumn(name = "client_id")
 	private User client;
-	
-	//Um Order tem uma colecao de OrderItems
-	//O order conhece os items dele
-	//mapeada para o atributo OrdemItemPK da classe OrdemItem, que tem como nome id, logo id.order
+
+	// Um Order tem uma colecao de OrderItems
+	// O order conhece os items dele
+	// mapeada para o atributo OrdemItemPK da classe OrdemItem, que tem como nome
+	// id, logo id.order
 	@OneToMany(mappedBy = "id.order")
 	private Set<OrderItem> items = new HashSet<>();
-	
-	//Um order tem um payment, mas pode haver um order sem payment sem payment
+
+	// Um order tem um payment, mas pode haver um order sem payment sem payment
 	// "order" assim como está na classe Payment
-	//CascadeType -> o Order vai ser mapeado com o mesmo id do Payment, orderId = 5 paymentId=5
-	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL) 
+	// CascadeType -> o Order vai ser mapeado com o mesmo id do Payment, orderId = 5
+	// paymentId=5
+	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
 	private Payment payment;
-	
-	public Order() {}
+
+	public Order() {
+	}
 
 	public Order(Long id, Instant moment, OrderStatus orderStatus, User client) {
 		super();
@@ -83,7 +87,7 @@ public class Order implements Serializable {
 	}
 
 	public void setOrderStatus(OrderStatus orderStatus) {
-		if(orderStatus != null)
+		if (orderStatus != null)
 			this.orderStatus = orderStatus.getCode();
 	}
 
@@ -94,7 +98,7 @@ public class Order implements Serializable {
 	public void setClient(User client) {
 		this.client = client;
 	}
-	
+
 	public Payment getPayment() {
 		return payment;
 	}
@@ -102,12 +106,12 @@ public class Order implements Serializable {
 	public void setPayment(Payment payment) {
 		this.payment = payment;
 	}
-	
-	//O order conhece os items dele
-	public Set<OrderItem> getItems(){
+
+	// O order conhece os items dele
+	public Set<OrderItem> getItems() {
 		return items;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -132,6 +136,12 @@ public class Order implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
+
+	public Double getTotal() {
+		double total = 0.0;
+		for (OrderItem orderItem : items) {
+			total += orderItem.getSubTotal();
+		}
+		return total;
+	}
 }
