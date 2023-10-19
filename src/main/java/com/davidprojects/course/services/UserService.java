@@ -5,13 +5,14 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.davidprojects.course.entities.User;
 import com.davidprojects.course.repositories.UserRepository;
 import com.davidprojects.course.services.exceptions.DatabaseException;
 import com.davidprojects.course.services.exceptions.ResourceNotFoundException;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
@@ -43,16 +44,19 @@ public class UserService {
 
 	public void delete(Long id) {
 
-		 /*
-		 	O metodo "deleteById" nao lança mais excecao quando o objeto do id nao existe,
-		 	portanto neste caso temos que verificar se o objeto do id existe com o metodo "existsById"
+		/*
+		 * O metodo "deleteById" nao lança mais excecao quando o objeto do id nao
+		 * existe, portanto neste caso temos que verificar se o objeto do id existe com
+		 * o metodo "existsById"
 		 */
 		if (!repository.existsById(id)) {
 			throw new ResourceNotFoundException(id);
 		}
 		/*
-			Por outro lado o "deleteById" pode lançar um DataIntegrityViolationException por isso devemos usar o try-catch
-			para capturar a excecao
+		 * Por outro lado o "deleteById" pode lançar um DataIntegrityViolationException,
+		 * como por exemplo tentar deletar um User que tenha orders, nao será possível
+		 * por os orders vao perder a referencia do user Por isso devemos usar o
+		 * try-catch para capturar a excecao
 		 */
 		try {
 			repository.deleteById(id);
@@ -63,12 +67,18 @@ public class UserService {
 
 	public User update(Long id, User obj) {
 
+		try {
+			User entity = repository.getReferenceById(id);
+
+			updateData(entity, obj);
+
+			return repository.save(entity);
+			
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		}
 		// Cria um objeto monitorado através do getReferenceById(id)
-		User entity = repository.getReferenceById(id);
-
-		updateData(entity, obj);
-
-		return repository.save(entity);
+		
 	}
 
 	private void updateData(User entity, User obj) {
